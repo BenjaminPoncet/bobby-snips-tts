@@ -10,7 +10,9 @@
   "license": "ISC",
   "dependencies": {
     "@google-cloud/text-to-speech": "^0.5.0",
+    "fs": "0.0.1-security",
     "mqtt": "^2.18.8",
-    "node-lame": "^1.2.0"
+    "node-lame": "^1.2.0",
+    "toml": "^3.0.0"
   }
 }

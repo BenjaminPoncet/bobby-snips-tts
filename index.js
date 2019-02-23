@@ -3,13 +3,21 @@ process.env.GOOGLE_APPLICATION_CREDENTIALS="/home/pi/bobby-snips-tts/google-cred
 const mqtt = require('mqtt');
 const Lame = require("node-lame").Lame;
 const textToSpeech = require('@google-cloud/text-to-speech');
-//const fs = require('fs');
+const fs = require('fs');
+const toml = require('toml');
+const snipsConfig = toml.parse(fs.readFileSync('/etc/snips.toml', 'utf-8'));
 
-var hostname = "mqtt://localhost";
-var clientMQTT  = mqtt.connect(hostname);
+var mqttHostname = "mqtt://localhost";
+var mqttOptions = {};
+
+if( snipsConfig['snips-common']['mqtt'] ) mqttHostname = "mqtt://"+snipsConfig['snips-common']['mqtt'];
+if( snipsConfig['snips-common']['mqtt_username'] ) mqttOptions['username'] = snipsConfig['snips-common']['mqtt_username'];
+if( snipsConfig['snips-common']['mqtt_password'] ) mqttOptions['password'] = snipsConfig['snips-common']['mqtt_password'];
+
+var clientMQTT  = mqtt.connect(mqttHostname, mqttOptions);
 
 clientMQTT.on('connect', function () {
-	console.log("[Bobby Snips TTS Log] Connected to MQTT broker " + hostname);
+	console.log("[Bobby Snips TTS Log] Connected to MQTT broker " + mqttHostname);
 	clientMQTT.subscribe('hermes/tts/say');
 });
 
