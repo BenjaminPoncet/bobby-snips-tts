@@ -1,4 +1,4 @@
-process.env.GOOGLE_APPLICATION_CREDENTIALS="/home/pi/bobby-snips-tts/google-credentials.json";
+process.env.GOOGLE_APPLICATION_CREDENTIALS = __dirname+"/google-credentials.json";
 
 const mqtt = require('mqtt');
 const Lame = require("node-lame").Lame;
@@ -6,6 +6,7 @@ const textToSpeech = require('@google-cloud/text-to-speech');
 const fs = require('fs');
 const toml = require('toml');
 const snipsConfig = toml.parse(fs.readFileSync('/etc/snips.toml', 'utf-8'));
+const exec = require('child_process').exec;
 
 var mqttHostname = "mqtt://localhost";
 var mqttOptions = {};
@@ -22,8 +23,10 @@ clientMQTT.on('connect', function () {
 });
 
 clientMQTT.on('message', function (topic, message) {
-	var jsonMessage = JSON.parse(message);
-	SpeakGoogle( jsonMessage );
+	if( topic == 'hermes/tts/say' ){
+		var jsonMessage = JSON.parse(message);
+		SpeakGoogle( jsonMessage );
+	}
 });
 
 function SpeakGoogle( jsonMsg ) {
@@ -45,23 +48,59 @@ function SpeakGoogle( jsonMsg ) {
 		//audioConfig: {audioEncoding: 'LINEAR16'},
 		audioConfig: {audioEncoding: 'MP3'},
 	};
+	var cancelSpeakGoogle = false;
+	var timeOfflineSpeak = setTimeout( function(){
+		cancelSpeakGoogle = true;
+		SpeakOffline( jsonMsg );
+	}, 2000 );
 
 	client.synthesizeSpeech(request, (err, response) => {
 		if (err) {
 			console.error('[Bobby Snips TTS Log] ERROR ', err);
+			if( !cancelSpeakGoogle ){
+				clearTimeout(timeOfflineSpeak);
+				SpeakOffline( jsonMsg );
+			}
 			return;
 		}
 		else{
-			console.log('[Bobby Snips TTS Log] '+hash+' / MP3 Time '+(Date.now()-debut));
+			console.log('[Bobby Snips TTS Log] '+hash+' / MP3 Time '+(Date.now()-debut)+'ms');
 			// fs.writeFile('output.mp3', response.audioContent, 'binary');
 			var decoder = new Lame({"output": "buffer"}).setBuffer(response.audioContent);
 			decoder.decode().then(() => {
-				clientMQTT.publish("hermes/audioServer/default/playBytes/{}"+hash, decoder.getBuffer());
-				clientMQTT.publish("hermes/tts/sayFinished", '{id:"'+jsonMsg.id+'", sessionId: "'+jsonMsg.sessionId+'"}');
-				// fs.writeFile('output.wav', decoder.getBuffer(), 'binary');
-				console.log('[Bobby Snips TTS Log] '+hash+' / WAV Time '+(Date.now()-debut));
+				clearTimeout(timeOfflineSpeak);
+				if( !cancelSpeakGoogle ){
+					clientMQTT.publish("hermes/audioServer/default/playBytes/{}"+hash, decoder.getBuffer());
+					clientMQTT.publish("hermes/tts/sayFinished", '{id:"'+jsonMsg.id+'", sessionId: "'+jsonMsg.sessionId+'"}');
+					// fs.writeFile('output.wav', decoder.getBuffer(), 'binary');
+					console.log('[Bobby Snips TTS Log] '+hash+' / WAV Time '+(Date.now()-debut)+'ms');
+				}
 			}).catch((error) => {
 				console.error('[Bobby Snips TTS Log] ERROR ', error);
+				if( !cancelSpeakGoogle ){
+					clearTimeout(timeOfflineSpeak);
+					SpeakOffline( jsonMsg );
+				}
+			});
+		}
+	});
+}
+
+function SpeakOffline( jsonMsg ) {
+	var debut = Date.now();
+	var hash = Math.random().toString(36).substr(2);
+	jsonMsg.lang = "fr-FR";
+	exec('pico2wave -l ' + jsonMsg.lang + ' -w /tmp/' + hash + '.wav " ' + jsonMsg.text + '"', (error, stdout, stderr) => {
+	  if(error) {
+			console.error('[Bobby Snips TTS Log] ERROR ', error);
+			return;
+		}
+		else{
+			fs.readFile('/tmp/' + hash + '.wav', function (err, data ) {
+				clientMQTT.publish("hermes/audioServer/default/playBytes/{}"+hash, data);
+				clientMQTT.publish("hermes/tts/sayFinished", '{id:"'+jsonMsg.id+'", sessionId: "'+jsonMsg.sessionId+'"}');
+				console.log('[Bobby Snips TTS Log] '+hash+' / WAV Time '+(Date.now()-debut)+'ms');
+				exec('rm -f /tmp/' + hash + '.wav');
 			});
 		}
 	});
