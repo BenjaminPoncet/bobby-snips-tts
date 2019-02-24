@@ -53,7 +53,7 @@ apt-get install lame
 
 First, you need Node.js and Git.
 
-Go in your favorite Node.js directory (for me `/home/pi`) and run
+Go in your favorite Node.js project directory (for me `/home/pi`) and run
 ```bash
 git clone https://github.com/BenjaminPoncet/bobby-snips-tts.git
 ```
@@ -61,11 +61,11 @@ Move to `bobby-snips-tts` directory and run
 ```bash
 npm install
 ```
-Copy your json GOOGLE APPLICATION CREDENTIALS in `bobby-snips-tts` directory and rename it `google-credentials.json`
+Copy your JSON GOOGLE APPLICATION CREDENTIALS in `bobby-snips-tts` directory and rename it `google-credentials.json`
 
 ## Manual run (for testing)
 
-Stop snips-tts by running
+Stop `snips-tts` by running
 ```bash
 systemctl stop snips-tts
 ```
@@ -80,12 +80,12 @@ Edit `bobby-snips-tts.service` and change the path of `index.js` if need (defaul
 
 Move `bobby-snips-tts.service` in `/etc/systemd/system/` directory.
 
-Stop and disable snips-tts by running
+Stop and disable `snips-tts` by running
 ```bash
 systemctl stop snips-tts
 systemctl disable snips-tts
 ```
-Enable and start bobby-snips-tts by running
+Enable and start `bobby-snips-tts` by running
 ```bash
 systemctl --system daemon-reload
 systemctl enable bobby-snips-tts
