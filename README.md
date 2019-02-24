@@ -1,6 +1,6 @@
 # bobby-snips-tts
 
-bobby-snips-tts is an implementation of snips-tts written in NodeJS. Why? Because NodeJS is life!
+bobby-snips-tts is an implementation of snips-tts written in Node.js. Why? Because Node.js is life!
 
 It's a part of Bobby Assistant Project but it's designed to run in standalone. So, feel free to fork, use and modify it.
 
@@ -51,9 +51,9 @@ With `apt-get` LAME can be simply install by running
 
 ## Install bobby-snips-tts
 
-First, you need NodeJS and Git.
+First, you need Node.js and Git.
 
-Go in your favorite NodeJS directory (for me `/home/pi`) and run `git clone https://github.com/BenjaminPoncet/bobby-snips-tts.git`
+Go in your favorite Node.js directory (for me `/home/pi`) and run `git clone https://github.com/BenjaminPoncet/bobby-snips-tts.git`
 
 Move to `bobby-snips-tts` directory and run `npm install`
 
