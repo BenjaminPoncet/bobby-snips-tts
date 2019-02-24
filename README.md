@@ -27,7 +27,7 @@ Because Google TTS (and much more TTS) are Online TTS, pico2wave is used has off
 1.  [Set up authentication with a service account][auth] so you can access the
     API from your local workstation.
 
-*This guide is an exact of Official Google Text-To-Speech Project. See more [googleapis/nodejs-text-to-speech][tts_project]*
+*This guide is an exact of Official Google Text-To-Speech Project. See more on [googleapis/nodejs-text-to-speech][tts_project]*
 
 [projects]: https://console.cloud.google.com/project
 [billing]: https://support.google.com/cloud/answer/6293499#enable-billing
@@ -42,9 +42,9 @@ LAME is used for converting MP3 buffer from Google TTS API to WAV buffer on the 
 bobby-snips-tts can work without LAME by asking WAV buffer directly from Google TTS API but WAVs are about 10 times bigger than MP3s so slower on network.
 
 With `apt-get` LAME can be simply install by running
-
-`apt-get install lame`
-
+```bash
+apt-get install lame
+```
 *See more on [LAME Website][lame_website]*
 
 [lame_website]: http://lame.sourceforge.net
@@ -53,17 +53,26 @@ With `apt-get` LAME can be simply install by running
 
 First, you need Node.js and Git.
 
-Go in your favorite Node.js directory (for me `/home/pi`) and run `git clone https://github.com/BenjaminPoncet/bobby-snips-tts.git`
-
-Move to `bobby-snips-tts` directory and run `npm install`
-
+Go in your favorite Node.js directory (for me `/home/pi`) and run
+```bash
+git clone https://github.com/BenjaminPoncet/bobby-snips-tts.git
+```
+Move to `bobby-snips-tts` directory and run
+```bash
+npm install
+```
 Copy your json GOOGLE APPLICATION CREDENTIALS in `bobby-snips-tts` directory and rename it `google-credentials.json`
 
 ## Manual run (for testing)
 
-Stop snips-tts by running `systemctl stop snips-tts`
-
-Move to `bobby-snips-tts` directory and run `node index.js`
+Stop snips-tts by running
+```bash
+systemctl stop snips-tts
+```
+Move to `bobby-snips-tts` directory and run
+```bash
+node index.js
+```
 
 ## Run as a service
 
@@ -72,21 +81,29 @@ Edit `bobby-snips-tts.service` and change the path of `index.js` if need (defaul
 Move `bobby-snips-tts.service` in `/etc/systemd/system/` directory.
 
 Stop and disable snips-tts by running
-
-`systemctl stop snips-tts`
-
-`systemctl disable snips-tts`
-
+```bash
+systemctl stop snips-tts
+systemctl disable snips-tts
+```
 Enable and start bobby-snips-tts by running
+```bash
+systemctl --system daemon-reload
+systemctl enable bobby-snips-tts
+systemctl start bobby-snips-tts
+```
 
-`systemctl --system daemon-reload`
+## Todo
 
-`systemctl enable bobby-snips-tts`
+TODO
 
-`systemctl start bobby-snips-tts`
+## Credits
 
+[Snips][snips] Voice Platform
 
+[KiboOst/SNIPS-Tips][tips1] and [snipsco/awesome-snips][tips2] for inspiration
 
-
+[snips]: https://snips.ai
+[tips1]: https://github.com/KiboOst/SNIPS-Tips
+[tips2]: https://github.com/snipsco/awesome-snips
 
 
