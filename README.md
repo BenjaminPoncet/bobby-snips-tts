@@ -63,6 +63,40 @@ npm install
 ```
 Copy your JSON GOOGLE APPLICATION CREDENTIALS in `bobby-snips-tts` directory and rename it `google-credentials.json`
 
+## Voice configuration
+
+See top of `index.js`:
+```javascript
+// Default Lang
+// Available Snips language: en, fr, it, es, de, ja, ko
+var defaultLang = "fr";
+
+// pico2wave Voice Config
+// Available Voices: en-US, en-GB, de-DE, es-ES, fr-FR, it-IT
+var voicePico = [];
+voicePico['en'] = "en-GB";
+voicePico['fr'] = "fr-FR";
+voicePico['it'] = "it-IT";
+voicePico['es'] = "es-ES";
+voicePico['de'] = "de-DE";
+voicePico['ja'] = "en-US";
+voicePico['ko'] = "en-US";
+
+// Google Voice Config
+// Available Voices: node listVoices.js
+var voiceGoogle = [];
+voiceGoogle['en'] = {voiceName: "en-US-Standard-B", voiceType: "MALE"};
+voiceGoogle['fr'] = {voiceName: "fr-CA-Standard-D", voiceType: "MALE"};
+voiceGoogle['it'] = {voiceName: "it-IT-Standard-A", voiceType: "FEMALE"};
+voiceGoogle['es'] = {voiceName: "es-ES-Standard-A", voiceType: "FEMALE"};
+voiceGoogle['de'] = {voiceName: "de-DE-Standard-B", voiceType: "MALE"};
+voiceGoogle['ja'] = {voiceName: "ja-JP-Standard-A", voiceType: "FEMALE"};
+voiceGoogle['ko'] = {voiceName: "ko-KR-Standard-C", voiceType: "MALE"};
+
+// Timeout before offline Speak for Cloud TTS call (in ms)
+var timeoutCloudTTS = 2500;
+```
+
 ## Manual run (for testing)
 
 Stop `snips-tts` by running
