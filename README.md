@@ -10,7 +10,7 @@ Because Google TTS (and much more TTS) are Online TTS, pico2wave is used has off
 
 ## Dependencies
 
-### Install Google Text-To-Speech
+### Get Google Text-To-Speech API Key
 
 1.  Select or create a Cloud Platform project.
 
